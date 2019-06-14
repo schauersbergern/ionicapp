@@ -23,7 +23,7 @@ export class MeetupService {
             meetup.startedAt = new Date();
             meetup.startedByUserId = this.userService.currentUserId;
 
-            this.meetupRepository.Create(meetup);
+            this.meetupRepository.create(meetup);
             
             return meetup;
         }
