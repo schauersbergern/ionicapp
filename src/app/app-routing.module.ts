@@ -17,7 +17,7 @@ const routes: Routes = [
   },
   { path: 'map', loadChildren: './map/map.module#MapPageModule' },
   {
-    path: 'meetup',
+    path: 'meetup/:meetupId',
     loadChildren: './meetup-view/meetup-view.module#MeetupViewPageModule'
   }
 ];

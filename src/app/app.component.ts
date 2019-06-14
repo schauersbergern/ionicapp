@@ -28,7 +28,7 @@ export class AppComponent {
     {
       title: 'Meetup',
       url: '/meetup',
-      icon: 'list'
+      icon: 'create'
     }
   ];
 

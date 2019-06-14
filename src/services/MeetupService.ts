@@ -3,6 +3,7 @@ import { MeetupModel } from "./model/MeetupModel";
 import { UserService } from "./UserService";
 import { Guid } from "guid-typescript"
 import { MeetupRepository } from "./repositories/MeetupRepository";
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class MeetupService {
@@ -26,5 +27,10 @@ export class MeetupService {
             this.meetupRepository.create(meetup);
             
             return meetup;
+        }
+
+        public get(meetupId: string): Observable<MeetupModel>
+        {
+            return new Observable<MeetupModel>();
         }
 }
