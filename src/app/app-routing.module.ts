@@ -15,7 +15,10 @@ const routes: Routes = [
     path: 'list',
     loadChildren: './list/list.module#ListPageModule'
   },
-  { path: 'meetup-view', loadChildren: './meetup-view/meetup-view.module#MeetupViewPageModule' }
+  {
+    path: 'meetup',
+    loadChildren: './meetup-view/meetup-view.module#MeetupViewPageModule'
+  }
 ];
 
 @NgModule({

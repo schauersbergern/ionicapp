@@ -6,6 +6,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { MeetupViewPage } from './meetup-view.page';
+import { MeetupEditComponent } from '../meetup-edit/meetup-edit.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [MeetupViewPage]
+  declarations: [MeetupViewPage,
+    MeetupEditComponent]
 })
 export class MeetupViewPageModule {}
