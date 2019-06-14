@@ -2,12 +2,14 @@ import { Injectable } from "@angular/core";
 import { MeetupModel } from "./model/MeetupModel";
 import { UserService } from "./UserService";
 import { Guid } from "guid-typescript"
+import { MeetupRepository } from "./repositories/MeetupRepository";
 
 @Injectable()
 export class MeetupService {
 
     constructor(
             private userService : UserService,
+            private meetupRepository: MeetupRepository,
         ) {}
         
 
@@ -21,6 +23,8 @@ export class MeetupService {
             meetup.startedAt = new Date();
             meetup.startedByUserId = this.userService.currentUserId;
 
+            this.meetupRepository.Create(meetup);
+            
             return meetup;
         }
 }
