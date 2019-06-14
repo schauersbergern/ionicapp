@@ -1,7 +1,5 @@
 {
-  "name": "MyIonicProject",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "ionic-angular"
+  "name": "ionicapp",
+  "integrations": {},
+  "type": "angular"
 }
