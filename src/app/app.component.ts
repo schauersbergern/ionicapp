@@ -24,6 +24,11 @@ export class AppComponent {
       title: 'Map',
       url: '/map',
       icon: 'map'
+    },
+    {
+      title: 'Meetup',
+      url: '/meetup',
+      icon: 'list'
     }
   ];
 
