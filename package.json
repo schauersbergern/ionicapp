@@ -28,6 +28,7 @@
     "@ionic/storage": "2.2.0",
     "angularfire2": "^5.2.1",
     "firebase": "^6.1.1",
+    "guid-typescript": "^1.0.9",
     "ionic-angular": "3.9.5",
     "ionicons": "3.0.0",
     "mdbootstrap": "^4.8.2",
