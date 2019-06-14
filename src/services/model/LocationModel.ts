@@ -1,3 +1,3 @@
-export interface LocationModel {
+export class LocationModel {
     id : string;
 }

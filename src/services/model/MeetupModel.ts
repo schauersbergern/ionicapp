@@ -1,4 +1,4 @@
-export interface MeetupModel {
+export class MeetupModel {
     title: string;
     description: string;
     id : string;
