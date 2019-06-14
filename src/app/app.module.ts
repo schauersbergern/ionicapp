@@ -32,7 +32,7 @@ import { firebaseConfig } from './credentials';
     ComponentsModule,
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
-    AngularFirestoreModule
+    AngularFirestoreModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
