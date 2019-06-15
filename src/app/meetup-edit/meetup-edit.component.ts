@@ -14,13 +14,13 @@ import { LocationModel } from 'src/services/model/LocationModel';
 export class MeetupEditComponent implements OnInit {
 
   @Input()
-  meetup: MeetupModel;
+  meetup: MeetupModel = null;
 
   @Output() saved = new EventEmitter<MeetupModel>();
   
   @Input()
   locations: LocationModel[];
-  
+
   constructor() { }
 
   ngOnInit() {

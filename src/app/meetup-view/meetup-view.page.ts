@@ -24,16 +24,19 @@ export class MeetupViewPage implements OnInit {
 
   ngOnInit() {
 
-/*    this.meetup$ = this.route.paramMap.pipe(
+    this.meetup$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.meetupId = params.get('meetupId');
         return this.meetupService.get(this.meetupId);
       })
-    ); */
+    );
 
-    this.meetup$.subscribe((meetup) => {
-      this.meetup = meetup;
-    });
+    if (this.meetup$)
+    {
+      this.meetup$.subscribe((meetup) => {
+        this.meetup = meetup;
+      });
+    }
 
     var loc1 = new LocationModel();
     loc1.id = 'loc1';
@@ -44,5 +47,14 @@ export class MeetupViewPage implements OnInit {
     loc2.name = 'LocationB';
 
     this.locations = [loc1, loc2];
+  }
+
+  save() {
+    if (this.meetup && this.meetup.id)
+    {
+      this.meetupService.update(this.meetup);
+    } else {
+      this.meetupService.add(this.meetup);
+    }
   }
 }

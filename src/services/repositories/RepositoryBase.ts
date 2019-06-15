@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
 import { RepositoryModelBase } from '../model/RepositoryModelBase';
 
 export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
@@ -8,8 +8,7 @@ export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
 
     abstract getCollectionName(): string;
 
-    constructor(private firestore: AngularFirestore
-    ) {
+    constructor(private firestore: AngularFirestore) {
         this.firebaseTable = this.firestore.collection<TDataType>(this.getCollectionName());
     }
 
@@ -19,7 +18,18 @@ export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
 
     public read(id: string): Observable<TDataType> {
         const key = this.findKey(id);
-        return this.firebaseTable.doc<TDataType>(key).valueChanges();
+        const result = new Observable<TDataType>((observer) => {
+            key.subscribe((ele) => {
+                if (ele.length > 0) {
+                    const docKey = ele[0].payload.doc.id;
+                    return this.firebaseTable.doc<TDataType>(docKey).valueChanges().subscribe(data => {
+                        observer.next(data);
+                        observer.complete();
+                    });
+                }
+            });
+        });
+        return result;
     }
 
     public update(data: TDataType) {
@@ -32,10 +42,17 @@ export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
 
     public delete(id: string) {
         const key = this.findKey(id);
-        this.firebaseTable.doc(key).delete();
+
+        key.subscribe((ele) => {
+            if (ele.length > 0) {
+                this.firebaseTable.doc<TDataType>(ele[0].payload.doc.id).delete();
+            }
+        });
     }
 
-    private findKey(id: string): string {
-        return this.firestore.collection<TDataType>(this.getCollectionName(), ref => ref.where('id', '==', id)).ref.id;
+    private findKey(id: string): Observable<DocumentChangeAction<TDataType>[]> {
+        const filtered = this.firestore.collection<TDataType>(this.getCollectionName(), ref => ref.where('id', '==', id));
+        const key = filtered.snapshotChanges();
+        return key;
     }
 }
