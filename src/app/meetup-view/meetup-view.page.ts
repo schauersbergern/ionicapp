@@ -24,12 +24,12 @@ export class MeetupViewPage implements OnInit {
 
   ngOnInit() {
 
-    this.meetup$ = this.route.paramMap.pipe(
+/*    this.meetup$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.meetupId = params.get('meetupId');
         return this.meetupService.get(this.meetupId);
       })
-    );
+    ); */
 
     this.meetup$.subscribe((meetup) => {
       this.meetup = meetup;

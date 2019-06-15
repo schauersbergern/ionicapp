@@ -20,6 +20,8 @@ import { environment } from '../environments/environment';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { LocationService } from 'src/services/LocationService';
 
+import { StorageServiceModule } from 'ngx-webstorage-service';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -28,7 +30,8 @@ import { LocationService } from 'src/services/LocationService';
     IonicModule.forRoot(),
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireDatabaseModule
+    AngularFireDatabaseModule,
+    StorageServiceModule
   ],
   providers: [
     StatusBar,
