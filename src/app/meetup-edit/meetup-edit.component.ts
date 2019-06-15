@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MeetupModel } from 'src/services/model/MeetupModel';
 import { MeetupService } from 'src/services/MeetupService';
+import { LocationModel } from 'src/services/model/LocationModel';
 
 @Component({
   selector: 'app-meetup-edit',
@@ -16,6 +17,9 @@ export class MeetupEditComponent implements OnInit {
   meetup: MeetupModel;
 
   @Output() saved = new EventEmitter<MeetupModel>();
+  
+  @Input()
+  locations: LocationModel[];
   
   constructor() { }
 
