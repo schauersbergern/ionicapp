@@ -12,22 +12,14 @@ import { MeetupService } from 'src/services/MeetupService';
 })
 export class MeetupEditComponent implements OnInit {
 
-  meetup$: Observable<MeetupModel>;
-  meetupId: string;
+  meetup: MeetupModel;
 
-  constructor(private route: ActivatedRoute,
-              private meetupService: MeetupService) { }
+  constructor() { }
 
   ngOnInit() {
-
-    this.meetup$ = this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.meetupId = params.get('meetupId');
-        return this.meetupService.get(this.meetupId);
-      }));
   }
 
   edit(form) {
-    console.log("Formdata: ", form);
+    console.log('Formdata: ', form);
   }
 }
