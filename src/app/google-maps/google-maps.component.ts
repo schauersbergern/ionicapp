@@ -9,6 +9,7 @@ import { Guid } from 'guid-typescript';
 import { UserModel } from 'src/services/model/UserModel';
 import { UserService } from 'src/services/UserService';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { LOCAL_STORAGE } from 'ngx-webstorage-service';
 
 const { Geolocation, Network } = Plugins;
 
@@ -31,7 +32,7 @@ export class GoogleMapsComponent implements OnInit {
     public id: any;
     public options: any;
 
-    constructor(private service: UserService, private firestore: AngularFirestore, private renderer: Renderer2, private element: ElementRef, @Inject(DOCUMENT) private _document, public nav : Router){        
+    constructor(private service: UserService, private firestore: AngularFirestore, private renderer: Renderer2, private element: ElementRef, @Inject(DOCUMENT) private _document, public nav : Router, @Inject(LOCAL_STORAGE) public LocStorage){        
         this.options = {
             enableHighAccuracy: false,
             timeout: 5000,
@@ -43,6 +44,8 @@ export class GoogleMapsComponent implements OnInit {
       var crd = pos.coords;
     
 // TODO: Update coordinates in firestore...
+// Get the current user...
+        this.LocStorage.get(this.LocStorage.STORAGE_KEY);
 
 /*      if (this.target.latitude === crd.latitude && this.target.longitude === crd.longitude) {
         console.log('Congratulations, you reached the target');
@@ -93,8 +96,10 @@ export class GoogleMapsComponent implements OnInit {
     afterTestMarker(mymap : any)
     {
         let center = mymap.getCenter();
-        //this.addMarker(center.lat(), center.lng());
+        //this.addMarker(center.lat(), center.lng());        
 
+        this.DeleteMarkers();
+        
         let userArray = new Array();
 
         if (this.userlist != null)
@@ -318,6 +323,13 @@ export class GoogleMapsComponent implements OnInit {
         return marker;
     }
 
+    DeleteMarkers() {
+        //Loop through all the markers and remove
+        for (var i = 0; i < this.markers.length; i++) {
+            this.markers[i].setMap(null);
+        }
+        this.markers = [];
+    };
 }
 
 export class UserMark {
@@ -327,7 +339,10 @@ export class UserMark {
 
     public HandleClick()
     {
-        window.confirm("Hello " + this.Mark.getTitle()); 
+        if (window.confirm("Link User " + this.Mark.getTitle() + " to current device?"))
+        {
+            this.Comp.LocStorage.storeOnLocalStorage(this.Id);            
+        }
         this.Comp.nav.navigate(['home']);
     }
 }
@@ -338,9 +353,8 @@ export class LocationMark {
     public Mark: google.maps.Marker;
 
     public HandleClick()
-    {
-        window.confirm("Hello " + this.Mark.getTitle()); 
-        this.Comp.nav.navigate(['home']);
+    {         
+        this.Comp.nav.navigate(['meetup', '']);
     }
 }
 
