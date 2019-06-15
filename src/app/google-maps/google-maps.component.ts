@@ -93,8 +93,10 @@ export class GoogleMapsComponent implements OnInit {
     afterTestMarker(mymap : any)
     {
         let center = mymap.getCenter();
-        //this.addMarker(center.lat(), center.lng());
+        //this.addMarker(center.lat(), center.lng());        
 
+        this.DeleteMarkers();
+        
         let userArray = new Array();
 
         if (this.userlist != null)
@@ -318,6 +320,13 @@ export class GoogleMapsComponent implements OnInit {
         return marker;
     }
 
+    DeleteMarkers() {
+        //Loop through all the markers and remove
+        for (var i = 0; i < this.markers.length; i++) {
+            this.markers[i].setMap(null);
+        }
+        this.markers = [];
+    };
 }
 
 export class UserMark {
