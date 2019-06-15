@@ -9,31 +9,29 @@ import { Observable } from 'rxjs';
 export class MeetupService {
 
     constructor(
-            private userService : UserService,
+            private userService: UserService,
             private meetupRepository: MeetupRepository,
         ) {}
 
 
-        public create(locationId : string): MeetupModel
-        {
+        public create(locationId : string): MeetupModel {
             const meetup = new MeetupModel();
 
             meetup.closed = false;
             meetup.id = Guid.create().toString();
             meetup.locationId = locationId;
             meetup.startedAt = new Date();
-            meetup.startedByUserId = "1";
+            meetup.startedByUserId = '1';
 
             this.meetupRepository.create(meetup);
 
             return meetup;
         }
 
-        public get(meetupId: string): Observable<MeetupModel>
-        {
+        public get(meetupId: string): Observable<MeetupModel> {
 
             return new Observable<MeetupModel>((observer) => {
-                const meetup  = new MeetupModel();
+                const meetup = new MeetupModel();
                 meetup.id = meetupId;
                 meetup.title = 'Hello World';
                 meetup.description = 'Description';

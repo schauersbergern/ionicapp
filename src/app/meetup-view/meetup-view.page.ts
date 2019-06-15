@@ -14,6 +14,7 @@ export class MeetupViewPage implements OnInit {
 
   meetup$: Observable<MeetupModel>;
   meetupId: string;
+  meetup: MeetupModel;
 
   constructor(private route: ActivatedRoute,
               private meetupService: MeetupService) { }
@@ -23,11 +24,12 @@ export class MeetupViewPage implements OnInit {
     this.meetup$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.meetupId = params.get('meetupId');
-        console.log('MeeupId:', this.meetupId);
-
         return this.meetupService.get(this.meetupId);
       })
     );
-  }
 
+    this.meetup$.subscribe((meetup) => {
+      this.meetup = meetup;
+    });
+  }
 }

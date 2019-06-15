@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ParamMap, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -12,14 +12,19 @@ import { MeetupService } from 'src/services/MeetupService';
 })
 export class MeetupEditComponent implements OnInit {
 
+  @Input()
   meetup: MeetupModel;
 
+  @Output() saved = new EventEmitter<MeetupModel>();
+  
   constructor() { }
 
   ngOnInit() {
   }
 
   edit(form) {
-    console.log('Formdata: ', form);
+    console.log('Formdata: ', form, 'Meketupdata:', this.meetup);
+
+    this.saved.emit(this.meetup);
   }
 }
