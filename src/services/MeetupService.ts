@@ -9,18 +9,22 @@ import { Observable } from 'rxjs';
 })
 export class MeetupService {
 
-  constructor(private firestore: AngularFirestore,
-              private meetupRepository: MeetupRepository) { }
+  constructor(private meetupRepository: MeetupRepository) { }
 
-  getAllMeetups() {
-    return this.firestore.collection('meetupList').snapshotChanges();
+  getAllMeetups(): Observable<MeetupModel[]> {
+    return this.meetupRepository.readAll();
   }
 
-  addMeetup(meetupModel : MeetupModel) {
-    this.firestore.collection('meetupList').add(meetupModel);
+  add(meetupModel: MeetupModel) {
+    this.meetupRepository.create(meetupModel);
   }
 
-  get(id: string) : Observable<MeetupModel> {
+  update(meetupModel: MeetupModel)
+  {
+    this.meetupRepository.update(meetupModel);
+  }
+
+  get(id: string): Observable<MeetupModel> {
     return this.meetupRepository.read(id);
   }
 }

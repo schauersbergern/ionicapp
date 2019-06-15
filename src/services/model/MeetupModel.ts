@@ -1,3 +1,5 @@
+import { RepositoryModelBase } from './RepositoryModelBase';
+
 export class MeetupModel extends RepositoryModelBase {
     title: string;
     description: string;

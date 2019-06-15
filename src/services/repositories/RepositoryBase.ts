@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { RepositoryModelBase } from '../model/RepositoryModelBase';
 
 export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
 
@@ -16,7 +17,7 @@ export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
         return this.firebaseTable.valueChanges();
     }
 
-    public read(id: string) : Observable<TDataType> {
+    public read(id: string): Observable<TDataType> {
         const key = this.findKey(id);
         return this.firebaseTable.doc<TDataType>(key).valueChanges();
     }
@@ -35,6 +36,6 @@ export abstract class RepositoryBase<TDataType extends RepositoryModelBase>  {
     }
 
     private findKey(id: string): string {
-        return this.firestore.collection<TDataType>(this.getCollectionName(), ref => ref.where('id', '==', id)).doc().ref.id;
+        return this.firestore.collection<TDataType>(this.getCollectionName(), ref => ref.where('id', '==', id)).ref.id;
     }
 }
