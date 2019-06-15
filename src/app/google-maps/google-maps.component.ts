@@ -1,9 +1,14 @@
 import { Component, Input, Renderer2, ElementRef, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
-import { Plugins } from '@capacitor/core';
+import { Plugins, GeolocationPosition } from '@capacitor/core';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { AppComponent } from '../../app/app.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { HomePage } from '../home/home.page';
+import { Guid } from 'guid-typescript';
+import { UserModel } from 'src/services/model/UserModel';
+import { UserService } from 'src/services/UserService';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 const { Geolocation, Network } = Plugins;
 
@@ -12,6 +17,7 @@ const { Geolocation, Network } = Plugins;
   templateUrl: './google-maps.component.html',
   styleUrls: ['./google-maps.component.scss'],
 })
+
 export class GoogleMapsComponent implements OnInit {
 
     @Input('apiKey') apiKey: string;
@@ -20,14 +26,39 @@ export class GoogleMapsComponent implements OnInit {
     public markers: any[] = [];
     private mapsLoaded: boolean = false;
     private networkHandler = null;
+    private userlist: UserModel[];
 
-    constructor(private renderer: Renderer2, private element: ElementRef, @Inject(DOCUMENT) private _document, private nav : RouterModule){
+    public id: any;
+    public options: any;
 
+    constructor(private service: UserService, private firestore: AngularFirestore, private renderer: Renderer2, private element: ElementRef, @Inject(DOCUMENT) private _document, public nav : Router){        
+        this.options = {
+            enableHighAccuracy: false,
+            timeout: 5000,
+            maximumAge: 0
+          };      
     }
+
+    success(pos) {
+      var crd = pos.coords;
+    
+// TODO: Update coordinates in firestore...
+
+/*      if (this.target.latitude === crd.latitude && this.target.longitude === crd.longitude) {
+        console.log('Congratulations, you reached the target');
+        navigator.geolocation.clearWatch(this.id);
+      } */
+    }
+    
+    error(err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+    }               
 
     ngOnInit(){
 
-        this.init().then((res) => {
+        this.id = navigator.geolocation.watchPosition(this.success, this.error, this.options);        
+
+        this.init(Geolocation.getCurrentPosition()).then((res) => {
             console.log("Google Maps ready.");
             this.testMarker();
         }, (err) => {    
@@ -39,43 +70,80 @@ export class GoogleMapsComponent implements OnInit {
     testMarker(){
 
         let mymap = this.map;
+        this.map.mapOptions
         if (mymap != null)
         {
-           let center = mymap.getCenter();
-           //this.addMarker(center.lat(), center.lng());
-           let mrk1 = this.addMarker(47.085350,9.8856, "Dr. No.");
-           mrk1.addListener('click',() => {
-/*            this.nav.push(ItemDetailsPage, {
-                item: mrk1
+            this.service.getAllUsers().subscribe(actionArray => {
+                this.userlist = actionArray.map(item => {
+                  return {
+                    id: item.payload.doc.id,                    
+                    ...item.payload.doc.data()
+                    /*                    name: item.payload.doc.data.name,
+                    hash : item.payload.doc.data.hash,
+                    email : item.payload.doc.email,
+                    lat : item.payload.doc.lat,
+                    lon : item.payload.doc.lon                                     */
+                  } as UserModel;
+                });
+                this.afterTestMarker(mymap);
             });
-/*            .navCtrl.push(ItemDetailsPage, {
-                item: item
-              }); */
-            //MyApp.setRoot(page.component);
-           });           
-           let mrk2 = this.addMarker(47.085550,9.885300, "Bernhard");
-           mrk2.addListener('click',() => {
-/*            this.nav.push(ItemDetailsPage, {
-                item: mrk2
-                });  */
-            }); 
-            
-            let coffeeloc = this.addLocation(47.085700,9.885500, "Kaffeemaschine")
-            coffeeloc.addListener('click',() => {
-/*                this.nav.push(ItemDetailsPage, {
-                    item: coffeeloc
-                    });  */
-                }); 
         } 
     } 
 
-    private init(): Promise<any> {
+    afterTestMarker(mymap : any)
+    {
+        let center = mymap.getCenter();
+        //this.addMarker(center.lat(), center.lng());
+
+        let userArray = new Array();
+
+        if (this.userlist != null)
+         {
+             for(let j=0; j < this.userlist.length;j++)
+             {
+                  let userMarkX = new UserMark();     
+                  userMarkX.Comp = this;
+                  userMarkX.Mark = this.addMarker(this.userlist[j].lat,this.userlist[j].lon, this.userlist[j].name);           
+                  userMarkX.Id = this.userlist[j].id;
+                  userArray.push(userMarkX);            
+             }     
+         }
+ 
+        for(let i=0;i<userArray.length;i++){        
+             userArray[i].Mark.addListener('click', () => {
+             userArray[i].HandleClick();
+             });                          
+         }
+
+        let locMark1 = new LocationMark();
+        locMark1.Comp = this;
+        locMark1.Mark = this.addLocation(47.085700,9.885500, "Kaffeemaschine");
+        locMark1.Id = "A";
+        
+        let locMark2 = new LocationMark();
+        locMark2.Comp = this;
+        locMark2.Mark = this.addLocation(47.085700,9.882450, "Kaffeemaschine 2");
+        locMark2.Id = "B";
+
+        let arrayCoffee = [locMark1, locMark2];
+
+         for (let i=0;i<arrayCoffee.length;i++) {
+             arrayCoffee[i].Mark.addListener('click',() => {                
+                 arrayCoffee[i].HandleClick();
+             });
+         }
+         
+         // Reposition marks...
+             //mrk1.setPosition(new google.maps.LatLng( 47.085350,10 ));
+    }
+
+    private init(locCenter: Promise<GeolocationPosition>): Promise<any> {
 
         return new Promise((resolve, reject) => {
 
             this.loadSDK().then((res) => {
 
-                this.initMap().then((res) => {
+                this.initMap(locCenter).then((res) => {
                     resolve(true);
                 }, (err) => {
                     reject(err);
@@ -119,7 +187,7 @@ export class GoogleMapsComponent implements OnInit {
 
                                     this.networkHandler.remove();
 
-                                    this.init().then((res) => {
+                                    this.init(Geolocation.getCurrentPosition()).then((res) => {
                                         console.log("Google Maps ready.")
                                     }, (err) => {    
                                         console.log(err);
@@ -184,11 +252,12 @@ export class GoogleMapsComponent implements OnInit {
 
     }
 
-    private initMap(): Promise<any> {
+    private initMap(locCenter: Promise<GeolocationPosition>): Promise<any> {
 
         return new Promise((resolve, reject) => {
 
-            Geolocation.getCurrentPosition().then((position) => {
+            //Geolocation.getCurrentPosition().then((position) => {
+               locCenter.then((position) => {
 
                 console.log(position);
 
@@ -196,7 +265,7 @@ export class GoogleMapsComponent implements OnInit {
 
                 let mapOptions = {
                     center: latLng,
-                    zoom: 15
+                    zoom: 20
                 };
 
                 this.map = new google.maps.Map(this.element.nativeElement, mapOptions);
@@ -206,7 +275,7 @@ export class GoogleMapsComponent implements OnInit {
 
                 reject('Could not initialise map');
 
-            });
+            }); 
 
         });
 
@@ -251,6 +320,28 @@ export class GoogleMapsComponent implements OnInit {
 
 }
 
+export class UserMark {
+    public Comp: GoogleMapsComponent;
+    public Id: string;
+    public Mark: google.maps.Marker;
 
+    public HandleClick()
+    {
+        window.confirm("Hello " + this.Mark.getTitle()); 
+        this.Comp.nav.navigate(['home']);
+    }
+}
+
+export class LocationMark {
+    public Comp: GoogleMapsComponent;
+    public Id: string;
+    public Mark: google.maps.Marker;
+
+    public HandleClick()
+    {
+        window.confirm("Hello " + this.Mark.getTitle()); 
+        this.Comp.nav.navigate(['home']);
+    }
+}
 
 

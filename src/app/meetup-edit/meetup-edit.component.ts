@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ParamMap, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MeetupModel } from 'src/services/model/MeetupModel';
 import { MeetupService } from 'src/services/MeetupService';
+import { LocationModel } from 'src/services/model/LocationModel';
 
 @Component({
   selector: 'app-meetup-edit',
@@ -12,22 +13,22 @@ import { MeetupService } from 'src/services/MeetupService';
 })
 export class MeetupEditComponent implements OnInit {
 
-  meetup$: Observable<MeetupModel>;
-  meetupId: string;
+  @Input()
+  meetup: MeetupModel;
 
-  constructor(private route: ActivatedRoute,
-              private meetupService: MeetupService) { }
+  @Output() saved = new EventEmitter<MeetupModel>();
+  
+  @Input()
+  locations: LocationModel[];
+  
+  constructor() { }
 
   ngOnInit() {
-
-    this.meetup$ = this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
-        this.meetupId = params.get('meetupId');
-        return this.meetupService.get(this.meetupId);
-      }));
   }
 
   edit(form) {
-    console.log("Formdata: ", form);
+    console.log('Formdata: ', form, 'Meketupdata:', this.meetup);
+
+    this.saved.emit(this.meetup);
   }
 }

@@ -1,20 +1,26 @@
 
 <form  #form="ngForm" (ngSubmit)="edit(form)">
-  <ion-item *ngIf="meetup$.id">
-      <ion-label>Id</ion-label>
-      <ion-input name="id" ngModel></ion-input>
+  <ion-item *ngIf="meetup && meetup.id">
+      <ion-label position="stacked">Id</ion-label>
+      <ion-input name="id" [(ngModel)]="meetup.id" readonly></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>Title</ion-label>
-    <ion-input name="title" ngModel required></ion-input>
+    <ion-label position="stacked">Title</ion-label>
+    <ion-input name="title" [(ngModel)]="meetup.title" required></ion-input>
   </ion-item>
   <ion-item>
-    <ion-label>Description</ion-label>
-    <ion-textarea name="description" ngModel></ion-textarea>
+    <ion-label position="stacked">Description</ion-label>
+    <ion-textarea name="description" [(ngModel)]="meetup.description"></ion-textarea>
   </ion-item>
   <ion-item>
-    <ion-label>Start Time</ion-label>
-    <ion-datetime display-format="HH:mm" minuteValues="0,15,30,45" name="starttime" ngModel></ion-datetime>
+    <ion-label position="stacked">Start Time</ion-label>
+    <ion-datetime display-format="HH:mm" minuteValues="0,15,30,45" name="startedAt" [(ngModel)]="meetup.startedAt"></ion-datetime>
   </ion-item>
-  <ion-button  size="large" type="submit" [disabled]="form.invalid" expand="block">Save</ion-button>
+  <ion-item>
+    <ion-label position="stacked">Location</ion-label>
+    <ion-select placeholder="Virtual Coffee" [(ngModel)]="meetup.locationId" name="locationId">
+        <ion-select-option value="location.id" *ngFor="let location of locations">{{location.name}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-button size="large" type="submit" [disabled]="form.invalid" expand="block">Save</ion-button>
 </form>

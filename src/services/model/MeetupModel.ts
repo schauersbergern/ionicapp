@@ -5,5 +5,5 @@ export class MeetupModel {
     startedAt: Date;
     startedByUserId: string;
     closed: boolean;
-    locationId: string
+    locationId: string;
 }
