@@ -1,14 +1,20 @@
 
-<ion-item>
-  <ion-label>Title</ion-label>
-  <ion-input></ion-input>
-</ion-item>
-<ion-item>
-  <ion-label>Description</ion-label>
-  <ion-textarea></ion-textarea>
-</ion-item>
-<ion-item>
-  <ion-label>Start Time</ion-label>
-  <ion-datetime display-format="HH:mm" minuteValues="0,15,30,45"></ion-datetime>
-</ion-item>
-
+<form  #form="ngForm" (ngSubmit)="edit(form)">
+  <ion-item *ngIf="meetup$.id">
+      <ion-label>Id</ion-label>
+      <ion-input name="id" ngModel></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Title</ion-label>
+    <ion-input name="title" ngModel required></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Description</ion-label>
+    <ion-textarea name="description" ngModel></ion-textarea>
+  </ion-item>
+  <ion-item>
+    <ion-label>Start Time</ion-label>
+    <ion-datetime display-format="HH:mm" minuteValues="0,15,30,45" name="starttime" ngModel></ion-datetime>
+  </ion-item>
+  <ion-button  size="large" type="submit" [disabled]="form.invalid" expand="block">Save</ion-button>
+</form>

@@ -27,4 +27,7 @@ export class MeetupEditComponent implements OnInit {
       }));
   }
 
+  edit(form) {
+    console.log("Formdata: ", form);
+  }
 }
