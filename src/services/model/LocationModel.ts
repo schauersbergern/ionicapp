@@ -1,4 +1,3 @@
-export class LocationModel {
-    id : string;
+export class LocationModel extends RepositoryModelBase {
     name: string;
 }

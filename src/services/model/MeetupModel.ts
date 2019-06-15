@@ -1,7 +1,6 @@
-export class MeetupModel {
+export class MeetupModel extends RepositoryModelBase {
     title: string;
     description: string;
-    id : string;
     startedAt: Date;
     startedByUserId: string;
     closed: boolean;

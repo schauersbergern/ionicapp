@@ -4,4 +4,7 @@ import { UserModel } from "../model/UserModel";
 
 @Injectable()
 export class UserRepository extends RepositoryBase<UserModel> {
+    getCollectionName(): string {
+       return 'userList';
+    }
 }

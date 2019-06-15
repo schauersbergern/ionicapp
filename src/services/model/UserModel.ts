@@ -1,5 +1,4 @@
-export class UserModel {
-    id : string;
+export class UserModel extends RepositoryModelBase {
     name : string;
     hash : string;
     email : string;

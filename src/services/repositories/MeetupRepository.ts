@@ -4,4 +4,7 @@ import { RepositoryBase } from "./RepositoryBase";
 
 @Injectable()
 export class MeetupRepository extends RepositoryBase<MeetupModel> {
+    getCollectionName(): string {
+        return 'meetupList';
+    }
 }
