@@ -1,9 +1,11 @@
 import { Component, Input, Renderer2, ElementRef, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/platform-browser';
-import { Plugins } from '@capacitor/core';
+import { Plugins, GeolocationPosition } from '@capacitor/core';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { AppComponent } from '../../app/app.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { HomePage } from '../home/home.page';
+import { Guid } from 'guid-typescript';
 
 const { Geolocation, Network } = Plugins;
 
@@ -12,6 +14,7 @@ const { Geolocation, Network } = Plugins;
   templateUrl: './google-maps.component.html',
   styleUrls: ['./google-maps.component.scss'],
 })
+
 export class GoogleMapsComponent implements OnInit {
 
     @Input('apiKey') apiKey: string;
@@ -21,13 +24,13 @@ export class GoogleMapsComponent implements OnInit {
     private mapsLoaded: boolean = false;
     private networkHandler = null;
 
-    constructor(private renderer: Renderer2, private element: ElementRef, @Inject(DOCUMENT) private _document, private nav : RouterModule){
+    constructor(private renderer: Renderer2, private element: ElementRef, @Inject(DOCUMENT) private _document, public nav : Router){        
 
     }
 
     ngOnInit(){
 
-        this.init().then((res) => {
+        this.init(Geolocation.getCurrentPosition()).then((res) => {
             console.log("Google Maps ready.");
             this.testMarker();
         }, (err) => {    
@@ -39,43 +42,60 @@ export class GoogleMapsComponent implements OnInit {
     testMarker(){
 
         let mymap = this.map;
+        this.map.mapOptions
         if (mymap != null)
         {
            let center = mymap.getCenter();
            //this.addMarker(center.lat(), center.lng());
-           let mrk1 = this.addMarker(47.085350,9.8856, "Dr. No.");
-           mrk1.addListener('click',() => {
-/*            this.nav.push(ItemDetailsPage, {
-                item: mrk1
-            });
-/*            .navCtrl.push(ItemDetailsPage, {
-                item: item
-              }); */
-            //MyApp.setRoot(page.component);
-           });           
-           let mrk2 = this.addMarker(47.085550,9.885300, "Bernhard");
-           mrk2.addListener('click',() => {
-/*            this.nav.push(ItemDetailsPage, {
-                item: mrk2
-                });  */
-            }); 
+           let userMark1 = new UserMark();
+           userMark1.Comp = this;
+           userMark1.Mark = this.addMarker(47.085350,9.8856, "Dr. No.");           
+           userMark1.Id = Guid.create();
+
+           let userMark2 = new UserMark();
+           userMark2.Comp = this;
+           userMark2.Mark = this.addMarker(47.085550,9.885300, "Bernhard");
+           userMark2.Id = Guid.create();
+
+           let arrayUser = [userMark1, userMark2];
+
+           let locMark1 = new LocationMark();
+           locMark1.Comp = this;
+           locMark1.Mark = this.addLocation(47.085700,9.885500, "Kaffeemaschine");
+           locMark1.Id = Guid.create();
+           
+           let locMark2 = new LocationMark();
+           locMark2.Comp = this;
+           locMark2.Mark = this.addLocation(47.085700,9.882450, "Kaffeemaschine 2");
+           locMark2.Id = Guid.create();
+
+           let arrayCoffee = [locMark1, locMark2];
+
+           for(let i=0;i<arrayUser.length;i++){        
+                arrayUser[i].Mark.addListener('click', () => {
+                    arrayUser[i].HandleClick();
+                });                          
+            } 
+
+            for (let i=0;i<arrayCoffee.length;i++) {
+                arrayCoffee[i].Mark.addListener('click',() => {                
+                    arrayCoffee[i].HandleClick();
+                });
+            }
             
-            let coffeeloc = this.addLocation(47.085700,9.885500, "Kaffeemaschine")
-            coffeeloc.addListener('click',() => {
-/*                this.nav.push(ItemDetailsPage, {
-                    item: coffeeloc
-                    });  */
-                }); 
+            // Reposition marks...
+                //mrk1.setPosition(new google.maps.LatLng( 47.085350,10 ));
+
         } 
     } 
 
-    private init(): Promise<any> {
+    private init(locCenter: Promise<GeolocationPosition>): Promise<any> {
 
         return new Promise((resolve, reject) => {
 
             this.loadSDK().then((res) => {
 
-                this.initMap().then((res) => {
+                this.initMap(locCenter).then((res) => {
                     resolve(true);
                 }, (err) => {
                     reject(err);
@@ -119,7 +139,7 @@ export class GoogleMapsComponent implements OnInit {
 
                                     this.networkHandler.remove();
 
-                                    this.init().then((res) => {
+                                    this.init(Geolocation.getCurrentPosition()).then((res) => {
                                         console.log("Google Maps ready.")
                                     }, (err) => {    
                                         console.log(err);
@@ -184,11 +204,12 @@ export class GoogleMapsComponent implements OnInit {
 
     }
 
-    private initMap(): Promise<any> {
+    private initMap(locCenter: Promise<GeolocationPosition>): Promise<any> {
 
         return new Promise((resolve, reject) => {
 
-            Geolocation.getCurrentPosition().then((position) => {
+            //Geolocation.getCurrentPosition().then((position) => {
+               locCenter.then((position) => {
 
                 console.log(position);
 
@@ -196,7 +217,7 @@ export class GoogleMapsComponent implements OnInit {
 
                 let mapOptions = {
                     center: latLng,
-                    zoom: 15
+                    zoom: 20
                 };
 
                 this.map = new google.maps.Map(this.element.nativeElement, mapOptions);
@@ -206,7 +227,7 @@ export class GoogleMapsComponent implements OnInit {
 
                 reject('Could not initialise map');
 
-            });
+            }); 
 
         });
 
@@ -251,6 +272,28 @@ export class GoogleMapsComponent implements OnInit {
 
 }
 
+export class UserMark {
+    public Comp: GoogleMapsComponent;
+    public Id: Guid;
+    public Mark: google.maps.Marker;
 
+    public HandleClick()
+    {
+        window.confirm("Hello " + this.Mark.getTitle()); 
+        this.Comp.nav.navigate(['home']);
+    }
+}
+
+export class LocationMark {
+    public Comp: GoogleMapsComponent;
+    public Id: Guid;
+    public Mark: google.maps.Marker;
+
+    public HandleClick()
+    {
+        window.confirm("Hello " + this.Mark.getTitle()); 
+        this.Comp.nav.navigate(['home']);
+    }
+}
 
 
