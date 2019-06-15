@@ -18,6 +18,7 @@ import { AngularFireModule } from '@angular/fire/firebase.app.module';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { environment } from '../environments/environment';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { LocationService } from 'src/services/LocationService';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,6 +36,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     MeetupService,
     UserService,
+    LocationService,
     MeetupRepository,
     LocationRepository,
     UserRepository,

@@ -1,41 +1,19 @@
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
-import { MeetupModel } from './model/MeetupModel';
-import { UserService } from './UserService';
-import { Guid } from 'guid-typescript'
-import { MeetupRepository } from './repositories/MeetupRepository';
-import { Observable } from 'rxjs';
+import { MeetupModel } from '../services/model/MeetupModel';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class MeetupService {
 
-    constructor(
-            private userService: UserService,
-            private meetupRepository: MeetupRepository,
-        ) {}
+  constructor(private firestore: AngularFirestore) { }
 
+  getAllMeetups() {
+    return this.firestore.collection('meetupList').snapshotChanges();
+  }
 
-        public create(locationId : string): MeetupModel {
-            const meetup = new MeetupModel();
-
-            meetup.closed = false;
-            meetup.id = Guid.create().toString();
-            meetup.locationId = locationId;
-            meetup.startedAt = new Date();
-            meetup.startedByUserId = '1';
-
-            this.meetupRepository.create(meetup);
-
-            return meetup;
-        }
-
-        public get(meetupId: string): Observable<MeetupModel> {
-
-            return new Observable<MeetupModel>((observer) => {
-                const meetup = new MeetupModel();
-                meetup.id = meetupId;
-                meetup.title = 'Hello World';
-                meetup.description = 'Description';
-                observer.next(meetup);
-            });
-        }
+  addMeetup(meetupModel : MeetupModel) {
+    this.firestore.collection('meetupList').add(meetupModel);
+  }
 }
