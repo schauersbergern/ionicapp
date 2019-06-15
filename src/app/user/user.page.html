@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>
+      List
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <table class="table table-hover">
+    <thead>
+      <th>id</th>
+      <th>name</th>
+      <th>email</th>
+      <th>lat</th>
+      <th>lon</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of list">
+        <td>{{user.id}}</td>
+        <td>{{user.name}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.lat}}</td>
+        <td>{{user.lon}}</td>
+      </tr>
+    </tbody>
+  </table>
+</ion-content>
