@@ -14,13 +14,20 @@ import { MeetupRepository } from 'src/services/repositories/MeetupRepository';
 import { LocationRepository } from 'src/services/repositories/LocationRepository';
 import { UserRepository } from 'src/services/repositories/UserRepository';
 
+import { AngularFireModule } from '@angular/fire/firebase.app.module';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { environment } from '../environments/environment';
+import { AngularFirestore } from '@angular/fire/firestore';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireDatabaseModule
   ],
   providers: [
     StatusBar,
@@ -30,7 +37,8 @@ import { UserRepository } from 'src/services/repositories/UserRepository';
     UserService,
     MeetupRepository,
     LocationRepository,
-    UserRepository
+    UserRepository,
+    AngularFirestore
   ],
   bootstrap: [AppComponent]
 })
