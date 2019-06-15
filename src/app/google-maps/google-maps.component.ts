@@ -52,7 +52,7 @@ export class GoogleMapsComponent implements OnInit {
                 item: item
               }); */
             //MyApp.setRoot(page.component);
-           });
+           });           
            let mrk2 = this.addMarker(47.085550,9.885300, "Bernhard");
            mrk2.addListener('click',() => {
 /*            this.nav.push(ItemDetailsPage, {
