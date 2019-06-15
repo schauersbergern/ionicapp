@@ -22,7 +22,7 @@ export class MeetupService {
             meetup.id = Guid.create().toString();
             meetup.locationId = locationId;
             meetup.startedAt = new Date();
-            meetup.startedByUserId = this.userService.currentUserId;
+            meetup.startedByUserId = "1";
 
             this.meetupRepository.create(meetup);
             

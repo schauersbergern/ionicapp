@@ -19,6 +19,10 @@ const routes: Routes = [
   {
     path: 'meetup/:meetupId',
     loadChildren: './meetup-view/meetup-view.module#MeetupViewPageModule'
+  },
+  {
+    path: 'userlist',
+    loadChildren: './user/user.module#UserPageModule'
   }
 ];
 
